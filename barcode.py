@@ -17,13 +17,13 @@ def read_barcodes(img):
     mean = np.int_(np.mean(img))
     img = add_padding(img)
     for a in angles:
-        for i in range(-20, 21, 5):
+        for i in range(-30, 31, 5):
             _, tmp = cv2.threshold(rotate(img, a*180/math.pi), mean+i, 255, cv2.THRESH_BINARY)
             for obj in pyzbar.decode(tmp):
                 return obj.data.decode('utf-8')
 
 def detect_barcodes(img):
-    results = model(img, conf=0.3, iou=0.1, agnostic_nms=True, imgsz=img.shape[0:2])
+    results = model(img, conf=0.1, iou=0.1, agnostic_nms=True, imgsz=(640, 640))
     for result in results:
         boxes = result.boxes
         for box in boxes:

@@ -35,7 +35,7 @@ def get_angle(img):
         ret.append(-sum(cand2)/len(cand2)+math.pi/2)
         ret.append(-sum(cand2)/len(cand2)+math.pi)
         ret.append(-sum(cand2)/len(cand2)+math.pi*3/2)
-    ret = list(set(map(lambda x: int(x/math.pi*180+360)%360,ret)))
+    ret = list(set(map(lambda x: int(x/math.pi*180+360)%360//10*10,ret)))
     return ret
 
 def rotate(img, angle):

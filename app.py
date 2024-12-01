@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+import base64
+from flask import Flask, request, render_template, jsonify
 from io import BytesIO
 import cv2
 import numpy as np
@@ -8,11 +9,10 @@ app = Flask(__name__)
 
 @app.route('/analyse', methods=['POST'])
 def analyse():
-    file_bytes = BytesIO(request.files['image'].read())
-    img = np.frombuffer(file_bytes.getvalue(), np.uint8)
+    img = np.frombuffer(base64.b64decode(request.json['image']), np.uint8)
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    return detect_object(img)
+    return jsonify(detect_object(img))
 
 @app.route('/')
 def home():

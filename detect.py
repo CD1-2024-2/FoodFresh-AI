@@ -44,7 +44,7 @@ model.predictor.postprocess = types.MethodType(postprocess, model.predictor)
 def detect_object(img):
     ret = []
     img = add_padding(img)
-    result = model(img, conf=0.1, iou=0.1, half=True, imgsz=(1280, 1280))[0]
+    result = model(img, conf=0.1, iou=0.1, half=True, imgsz=((1280, 1280)))[0]
     boxes = result.boxes
     for box in boxes:
         x1, y1, x2, y2 = map(int, box.xyxy[0])

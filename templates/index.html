@@ -7,11 +7,47 @@
 </head>
 <body>
     <h1>Upload Image</h1>
-    <form action="/analyse" method="POST" enctype="multipart/form-data">
-        <label for="image">Choose an image:</label>
-        <input type="file" id="image" name="image" accept="image/*" required>
-        <br><br>
-        <button type="submit">Upload</button>
-    </form>
+    <label for="image">Choose an image:</label>
+    <input type="file" id="image" name="image" accept="image/*" required>
+    <br><br>
+    <button id="submit">Upload</button>
+    <p id="status"></p>
+    <script>
+        document.getElementById('submit').addEventListener('click', async () => {
+            const fileInput = document.getElementById('image');
+            const status = document.getElementById('status');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                status.textContent = "Please select an image!";
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const base64String = event.target.result.split(',')[1];
+                const jsonData = { image: base64String };
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/analyse', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(jsonData),
+                    });
+
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        status.textContent = `Server Response: ${JSON.stringify(responseData)}`;
+                    } else {
+                        status.textContent = `Error: ${response.status} ${response.statusText}`;
+                    }
+                } catch (error) {
+                    status.textContent = `Error: ${error.message}`;
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
 </body>
 </html>
