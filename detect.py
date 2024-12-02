@@ -6,7 +6,7 @@ from PIL import Image
 from classify import classify
 from barcode import detect_barcodes
 from date import read_date
-from img_utils import add_padding
+from img_utils import add_padding, image_to_base64
 
 from ultralytics import YOLO
 from ultralytics.utils import ops
@@ -52,13 +52,10 @@ def detect_object(img):
         barcode = detect_barcodes(rect)
         date = read_date(rect)
         tag = classify(rect) if barcode is None else None
-        
-        buffered = BytesIO()
-        Image.fromarray(rect).save(buffered, format="JPEG")
         ret.append({
-            "image": base64.b64encode(buffered.getvalue()),
+            "image": image_to_base64(rect),
             "tag": tag,
             "barcode": barcode,
             "date": read_date(rect)
         })
-    return str(ret)
+    return ret

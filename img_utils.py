@@ -1,6 +1,9 @@
 import numpy as np
 import cv2
 import math
+import base64
+from io import BytesIO
+from PIL import Image
 
 def get_angle(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -53,3 +56,21 @@ def add_padding(img):
     elif w > h:
         return cv2.copyMakeBorder(img, diff//2, (diff+1)//2, 0, 0, cv2.BORDER_CONSTANT, value=[0])
     return img
+
+def resize_image(img, max_size=(100, 100)):
+    height, width = img.shape[:2]
+    max_width, max_height = max_size
+
+    scaling_factor = min(max_width / width, max_height / height)
+    new_width = int(width * scaling_factor)
+    new_height = int(height * scaling_factor)
+
+    img = cv2.resize(img, (new_width, new_height))
+    return img
+
+def image_to_base64(img):
+    img = img.copy()
+    img = resize_image(img)
+    buffered = BytesIO()
+    Image.fromarray(img).save(buffered, format="JPEG")
+    return base64.b64encode(buffered.getvalue()).decode('utf-8')
