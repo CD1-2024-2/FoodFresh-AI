@@ -7,47 +7,48 @@ from PIL import Image
 
 from img_utils import add_padding
 
-cls = [
-    'apple',
-    'banana',
-    'beetroot',
-    'bell pepper',
-    'cabbage',
-    'capsicum',
-    'carrot',
-    'cauliflower',
-    'chilli pepper',
-    'corn',
-    'cucumber',
-    'eggplant',
-    'garlic',
-    'ginger',
-    'grapes',
-    'jalepeno',
-    'kiwi',
-    'lemon',
-    'lettuce',
-    'mango',
-    'onion',
-    'orange',
-    'paprika',
-    'pear',
-    'peas',
-    'pineapple',
-    'pomegranate',
-    'potato',
-    'raddish',
-    'soy beans',
-    'spinach',
-    'sweetcorn',
-    'sweetpotato',
-    'tomato',
-    'turnip',
-    'watermelon'
+clsNexdate = [
+    ('apple', 30),
+    ('banana', 7),
+    ('beetroot', 14),
+    ('bell pepper', 10),
+    ('cabbage', 14),
+    ('capsicum', 10),
+    ('carrot', 21),
+    ('cauliflower', 10),
+    ('chilli pepper', 10),
+    ('corn', 7),
+    ('cucumber', 7),
+    ('eggplant', 7),
+    ('garlic', 60),
+    ('ginger', 30),
+    ('grapes', 7),
+    ('jalepeno', 7),
+    ('kiwi', 14),
+    ('lemon', 30),
+    ('lettuce', 5),
+    ('mango', 7),
+    ('onion', 60),
+    ('orange', 30),
+    ('paprika', 10),
+    ('pear', 14),
+    ('peas', 7),
+    ('pineapple', 7),
+    ('pomegranate', 30),
+    ('potato', 30),
+    ('raddish', 10),
+    ('soy beans', 7),
+    ('spinach', 5),
+    ('sweetcorn', 7),
+    ('sweetpotato', 30),
+    ('tomato', 7),
+    ('turnip', 14),
+    ('watermelon', 7)
 ]
+
 model = EfficientNet.from_pretrained('efficientnet-b0')
 num_ftrs = model._fc.in_features
-model._fc = nn.Linear(num_ftrs, len(cls))
+model._fc = nn.Linear(num_ftrs, len(clsNexdate))
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = model.to(torch.device(device))
@@ -66,4 +67,4 @@ def classify(img):
     with torch.no_grad():
         outputs = model(img_tensor)
         _, predicted = torch.max(outputs, 1)
-    return cls[predicted.item()]
+    return clsNexdate[predicted.item()]

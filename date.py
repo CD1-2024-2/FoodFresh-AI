@@ -29,3 +29,4 @@ def read_date(img):
         date = date_parse(text)
         if date and start_date < date and date < end_date:
             return date.strftime('%Y-%m-%d')
+    return start_date.strftime('%Y-%m-%d')

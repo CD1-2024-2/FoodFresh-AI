@@ -4,7 +4,7 @@ from io import BytesIO
 from PIL import Image
 
 from classify import classify
-from barcode import detect_barcodes
+from barcode import detect_barcodes, barcode2name
 from date import read_date
 from img_utils import add_padding, image_to_base64
 
@@ -48,14 +48,22 @@ def detect_object(img):
     boxes = result.boxes
     for box in boxes:
         x1, y1, x2, y2 = map(int, box.xyxy[0])
+        w, h = img.shape[0:2]
         rect = img[y1:y2, x1:x2]
         barcode = detect_barcodes(rect)
-        date = read_date(rect)
-        tag = classify(rect) if barcode is None else None
-        ret.append({
-            "image": image_to_base64(rect),
-            "tag": tag,
-            "barcode": barcode,
-            "date": read_date(rect)
-        })
+        if barcode != None:
+            ret.append({
+                "rect": [x1/w, y1/h, (x2-x1)/w, (y2-y1)/h],
+                "tag": barcode2name(barcode),
+                "barcode": barcode,
+                "date": read_date(rect)
+            })
+        else:
+            tag, date = classify(rect)
+            ret.append({
+                "rect": [x1/w, y1/h, (x2-x1)/w, (y2-y1)/h],
+                "tag": tag,
+                "barcode": "",
+                "date": date
+            })
     return ret
