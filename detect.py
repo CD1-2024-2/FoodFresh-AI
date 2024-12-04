@@ -1,5 +1,6 @@
 import torch
 import types
+import datetime
 from io import BytesIO
 from PIL import Image
 
@@ -64,6 +65,6 @@ def detect_object(img):
                 "rect": [x1/w, y1/h, (x2-x1)/w, (y2-y1)/h],
                 "tag": tag,
                 "barcode": "",
-                "date": date
+                "date": (datetime.datetime.now()+datetime.timedelta(days=date)).strftime('%Y-%m-%d')
             })
     return ret
